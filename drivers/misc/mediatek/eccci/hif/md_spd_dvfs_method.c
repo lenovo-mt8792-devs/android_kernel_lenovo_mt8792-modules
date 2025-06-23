@@ -244,7 +244,9 @@ static const struct dvfs_ref *s_dl_dvfs_tbl;
 static int s_dl_dvfs_items_num;
 static const struct dvfs_ref *s_ul_dvfs_tbl;
 static int s_ul_dvfs_items_num;
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 static unsigned int s_prefer_cpu_bitmap;
+#endif
 
 static int s_tx_done_affinity[4] = {-1};
 static struct task_struct *s_rx_push_task;
@@ -281,7 +283,9 @@ static void spd_qos_tbl_init(void)
 	s_ul_dvfs_tbl = table_entry[ver].ul_tbl;
 	s_ul_dvfs_items_num = table_entry[ver].ul_tbl_item_num;
 
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 	s_prefer_cpu_bitmap = table_entry[ver].prefer_core_bitmap;
+#endif
 
 	if (s_ul_dvfs_items_num)
 		s_curr_ul_idx = s_ul_dvfs_items_num - 1;
@@ -372,6 +376,7 @@ static inline void apply_qos_dram_freq(void)
 	}
 }
 
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 static inline void apply_qos_rps(void)
 {
 	const struct dvfs_ref *dl_ref, *ul_ref;
@@ -400,6 +405,7 @@ static inline void apply_qos_rps(void)
 			s_rps, dl_rps, ul_rps, case_type);
 	set_ccmni_rps(s_rps);
 }
+#endif
 
 static inline void apply_qos_isr(void)
 {
@@ -519,7 +525,9 @@ static inline void spd_qos_method(u64 dl_speed[], u32 dl_num, u64 ul_speed[], u3
 		apply_qos_cpu_freq();
 		apply_qos_dram_freq();
 		apply_qos_isr();
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 		apply_qos_rps();
+#endif
 		update_tx_done_affinity();
 
 		if (dl_change)
@@ -556,5 +564,7 @@ void mtk_ccci_spd_qos_method_init(void)
 
 	spd_qos_tbl_init();
 	mtk_ccci_register_speed_callback(spd_qos_method, NULL);
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 	ccmni_set_init_rps(s_prefer_cpu_bitmap);
+#endif
 }

@@ -55,7 +55,9 @@ long gro_flush_timer __read_mostly = 2000000L;
 #else
 long gro_flush_timer;
 #endif
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 static unsigned long g_init_rps_value;
+#endif
 /*VIP_MARK is defined as highest priority */
 #define APP_VIP_MARK		0x80000000
 #define APP_VIP_MARK2		0x40000000
@@ -104,6 +106,7 @@ static void unregister_tcp_pacing_sysctl(void)
 	unregister_sysctl_table(sysctl_header);
 }
 
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 void ccmni_set_init_rps(unsigned long rps_value)
 {
 	g_init_rps_value = rps_value;
@@ -123,6 +126,7 @@ void set_ccmni_rps(unsigned long value)
 		set_rps_map(ccmni_ctl_blk->ccmni_inst[i]->dev->_rx, value);
 }
 EXPORT_SYMBOL(set_ccmni_rps);
+#endif
 
 void ccmni_set_cur_speed(u64 cur_dl_speed)
 {
@@ -428,20 +432,31 @@ static int ccmni_open(struct net_device *dev)
 		usage_cnt = atomic_read(&ccmni->usage);
 		atomic_set(&ccmni_tmp->usage, usage_cnt);
 	}
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 	if (g_init_rps_value)
 		set_rps_map(dev->_rx, g_init_rps_value);
 	else
 		set_rps_map(dev->_rx, 0x0F);
+#endif
 	queue_delayed_work(ccmni->worker,
 				&ccmni->pkt_queue_work,
 				msecs_to_jiffies(500));
 
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 	pr_info(
 		"%s_Open:cnt=(%d,%d), md_ab=0x%X, gro=(%llx, %ld), flt_cnt=%d, rps:%lx\n",
 		dev->name, atomic_read(&ccmni->usage),
 		atomic_read(&ccmni_tmp->usage),
 		ccmni_ctl_blk->ccci_ops->md_ability,
 		dev->features, gro_flush_timer, ccmni->flt_cnt, g_init_rps_value? g_init_rps_value: 0x0F);
+#else
+	pr_info(
+		"%s_Open:cnt=(%d,%d), md_ab=0x%X, gro=(%llx, %ld), flt_cnt=%d\n",
+		dev->name, atomic_read(&ccmni->usage),
+		atomic_read(&ccmni_tmp->usage),
+		ccmni_ctl_blk->ccci_ops->md_ability,
+		dev->features, gro_flush_timer, ccmni->flt_cnt);
+#endif
 
 	return 0;
 }
