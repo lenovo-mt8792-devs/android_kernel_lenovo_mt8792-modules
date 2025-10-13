@@ -588,7 +588,9 @@ static int mtk_vcodec_enc_probe(struct platform_device *pdev)
 	mutex_init(&dev->prop_param_mutex);
 
 	dev_ptr = dev;
+#if IS_ENABLED(CONFIG_MTK_SCHED_FAST_LOAD_TRACKING)
 	mtk_vcodec_init_group_list_lock();
+#endif
 
 	return 0;
 
