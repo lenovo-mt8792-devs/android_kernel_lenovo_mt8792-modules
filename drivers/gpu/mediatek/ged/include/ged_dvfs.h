@@ -6,6 +6,7 @@
 #ifndef __GED_DVFS_H__
 #define __GED_DVFS_H__
 
+#include <linux/minmax.h>
 #include <linux/types.h>
 #include "ged_type.h"
 
