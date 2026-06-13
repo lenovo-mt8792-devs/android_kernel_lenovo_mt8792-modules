@@ -264,7 +264,7 @@ struct nvt_ts_device {
 struct nvt_ts_data {
 	struct spi_device *client;
 	struct input_dev *input_dev;
-	struct delayed_work nvt_fwu_work;
+	struct work_struct nvt_fwu_work;
 	uint16_t addr;
 	int8_t phys[32];
 #if IS_ENABLED(NVT_DRM_PANEL_NOTIFY)
