@@ -27,7 +27,7 @@
 	} while (0)
 #else
 #define apusys_ce_aee_warn(module, reason)
-#define apusys_ce_exception_aee_warn(module, reason)
+#define apusys_ce_exception_aee_warn(module)
 
 #endif
 
