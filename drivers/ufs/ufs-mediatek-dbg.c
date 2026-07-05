@@ -59,6 +59,7 @@ extern void mt_irq_dump_status(unsigned int irq);
 
 void ufs_mtk_eh_abort(unsigned int tag)
 {
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	static int ufs_abort_aee_count;
 
 	if (!ufs_abort_aee_count) {
@@ -66,6 +67,7 @@ void ufs_mtk_eh_abort(unsigned int tag)
 		ufs_mtk_dbg_cmd_hist_disable();
 		ufs_mtk_aee_warning("ufshcd_abort at tag %d", tag);
 	}
+#endif
 }
 EXPORT_SYMBOL_GPL(ufs_mtk_eh_abort);
 
@@ -86,9 +88,11 @@ void ufs_mtk_eh_unipro_set_lpm(struct ufs_hba *hba, int ret)
 			 __func__, val);
 	}
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	ufs_mtk_aee_warning(
 		"Set 0xD0A8 timeout, ret=%d, ret2=%d, 0xD0A8=%d",
 		ret, ret2, val);
+#endif
 }
 EXPORT_SYMBOL_GPL(ufs_mtk_eh_unipro_set_lpm);
 
@@ -112,12 +116,14 @@ void ufs_mtk_eh_err_cnt(void)
 		err_count++;
 	}
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	/*
 	 * Most uic error is recoverable, it should be minor.
 	 * Only dump db if uic error heppen frequently(>=6) in 72 hrs.
 	 */
 	if (err_count >= 6)
 		ufs_mtk_aee_warning("Error Dump %d", err_count);
+#endif
 }
 EXPORT_SYMBOL_GPL(ufs_mtk_eh_err_cnt);
 
