@@ -14,7 +14,9 @@ ccflags-y += -I$(DEVICE_MODULES_PATH)/drivers/iommu \
              -I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/vcp/rv/ \
              -I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/vcp/include/
 
+ifneq (,$(strip $(CONFIG_MMPROFILE)))
 ccflags-$(CONFIG_DEBUG_FS) += -DCONFIG_CMDQ_MMPROFILE_SUPPORT
+endif
 
 ifeq ($(CONFIG_MICROTRUST_TEE_SUPPORT),m)
 include $(DEVICE_MODULES_PATH)/drivers/tee/teei/Makefile.include

@@ -209,6 +209,7 @@ struct cmdq_buf_dump {
 	dma_addr_t		pa_offset; /* pa_curr - pa_base */
 };
 
+#if IS_ENABLED(CONFIG_CMDQ_MMPROFILE_SUPPORT)
 #define mmp_event unsigned int
 
 struct cmdq_mmp_event {
@@ -225,6 +226,7 @@ struct cmdq_mmp_event {
 	mmp_event pkt_size;
 };
 struct cmdq_mmp_event	cmdq_mmp;
+#endif
 
 struct cmdq {
 	struct mbox_controller	mbox;

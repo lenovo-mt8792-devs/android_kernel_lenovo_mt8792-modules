@@ -164,7 +164,9 @@ struct cmdq_sec {
 	struct cmdq_sec_shared_mem	*shared_mem;
 	struct cmdq_sec_context		*context;
 	struct iwcCmdqCancelTask_t	cancel;
+#if IS_ENABLED(CONFIG_MMPROFILE)
 	struct cmdq_mmp_event		mmp;
+#endif
 	struct mutex mbox_mutex;
 };
 static atomic_t cmdq_path_res = ATOMIC_INIT(0);
@@ -1583,8 +1585,10 @@ static int cmdq_sec_mbox_send_data(struct mbox_chan *chan, void *data)
 		(struct cmdq_sec_data *)pkt->sec_data;
 	struct cmdq_sec_thread *thread =
 		(struct cmdq_sec_thread *)chan->con_priv;
+#if IS_ENABLED(CONFIG_MMPROFILE)
 	struct cmdq_sec *cmdq =
 		container_of(thread->chan->mbox, struct cmdq_sec, mbox);
+#endif
 	struct cmdq_sec_task *task;
 
 	if (!sec_data) {
