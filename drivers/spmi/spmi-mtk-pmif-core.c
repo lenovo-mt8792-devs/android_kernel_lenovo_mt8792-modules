@@ -754,9 +754,9 @@ static void pmif_hwinf_err_irq_handler(int irq_m, int irq_p, void *data, int idx
 static void pmif_hw_monitor_irq_handler(int irq, void *data)
 {
 	spmi_dump_pmif_record_reg(0, 0);
-	if (IS_ENABLED(CONFIG_MTK_AEE_FEATURE))
-		aee_kernel_warning("PMIF", "PMIF:pmif_hw_monitor_match");
-
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
+	aee_kernel_warning("PMIF", "PMIF:pmif_hw_monitor_match");
+#endif
 	pr_notice("[PMIF]:pmif_hw_monitor_match\n");
 }
 
@@ -1377,8 +1377,9 @@ static irqreturn_t spmi_nack_irq_handler(int irq, void *data)
 	}
 	if (flag) {
 		/* trigger AEE event*/
-		if (IS_ENABLED(CONFIG_MTK_AEE_FEATURE))
-			aee_kernel_warning("SPMI", "SPMI:transaction_fail");
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
+		aee_kernel_warning("SPMI", "SPMI:transaction_fail");
+#endif
 	}
 	/* clear irq*/
 	if ((spmi_nack & 0xF8) || (spmi_rcs_nack & 0xC0000) ||
