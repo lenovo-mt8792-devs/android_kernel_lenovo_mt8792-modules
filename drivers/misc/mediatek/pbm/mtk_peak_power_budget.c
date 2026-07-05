@@ -1053,7 +1053,9 @@ static ssize_t mt_peak_power_mode_proc_write
 		ppb_ctrl.ppb_mode = mode;
 		ppb_write_sram(mode, PPB_MODE);
 		lbat_set_ppb_mode(mode);
+#if IS_ENABLED(CONFIG_MTK_BATTERY_OC_POWER_THROTTLING)
 		bat_oc_set_ppb_mode(mode);
+#endif
 	} else
 		pr_notice("ppb mode should be 0 or 1 or 2\n");
 
