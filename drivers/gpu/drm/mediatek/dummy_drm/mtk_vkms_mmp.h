@@ -7,7 +7,6 @@
 #define _MTK_VKMS_MMP_H_
 
 #include "mmprofile.h"
-#include "mmprofile_function.h"
 
 #define MMP_CRTC_NUM 3
 

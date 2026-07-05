@@ -17,7 +17,6 @@
 
 #ifdef MML_MMP_SUPPORT
 #include <mmprofile.h>
-#include <mmprofile_function.h>
 
 #define mmp_data2_fence(c, s)	((c & 0xff) << 24 | s & 0xffffff)
 

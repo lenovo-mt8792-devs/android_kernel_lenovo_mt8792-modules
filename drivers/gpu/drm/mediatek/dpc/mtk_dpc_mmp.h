@@ -14,7 +14,6 @@ static inline void dpc_mmp_init(void) {}
 #else
 
 #include <mmprofile.h>
-#include <mmprofile_function.h>
 
 #define dpc_mmp(event, flag, v1, v2) \
 	mmprofile_log_ex(dpc_mmp_get_event()->event, flag, v1, v2)

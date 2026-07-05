@@ -7,7 +7,6 @@
 #define __MTK_DRM_MMP_H__
 
 #include "mmprofile.h"
-#include "mmprofile_function.h"
 #include "mtk_drm_ddp.h"
 
 #define MMP_CRTC_NUM 4
