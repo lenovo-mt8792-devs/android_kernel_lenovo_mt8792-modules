@@ -35,7 +35,7 @@ int adaptor_log_buf_gather(struct adaptor_ctx *ctx, const char *caller,
 
 #else
 #define WRAP_AEE_EXCEPTION(module, msg)	\
-	WARN_ON(1, "<%s:%d> %s: %s\n", __FILE__, __LINE__, module, msg)
+	WARN(1, "<%s:%d> %s: %s\n", __FILE__, __LINE__, module, msg)
 
 #endif //IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 

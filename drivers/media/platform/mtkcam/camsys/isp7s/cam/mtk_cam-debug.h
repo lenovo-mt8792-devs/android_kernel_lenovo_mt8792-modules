@@ -124,7 +124,7 @@ int mtk_cam_debug_exp_dump(struct mtk_cam_debug *dbg,
 
 #else
 #define WRAP_AEE_EXCEPTION(module, msg)	\
-	WARN_ON(1, "<%s:%d> %s: %s\n", __FILE__, __LINE__, module, msg)
+	WARN(1, "<%s:%d> %s: %s\n", __FILE__, __LINE__, module, msg)
 
 #endif //IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 
