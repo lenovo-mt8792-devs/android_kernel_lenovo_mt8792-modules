@@ -710,9 +710,11 @@ end:
 void scp_aed(enum SCP_RESET_TYPE type, enum scp_core_id id)
 {
 	char *scp_aed_title = NULL;
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	size_t timeout = msecs_to_jiffies(SCP_COREDUMP_TIMEOUT_MS);
 	size_t expire = jiffies + timeout;
 	int ret;
+#endif
 
 	if (!scp_ee_enable) {
 		pr_debug("[SCP]ee disable value=%d\n", scp_ee_enable);
@@ -726,6 +728,7 @@ void scp_aed(enum SCP_RESET_TYPE type, enum scp_core_id id)
 		return;
 	}
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	while (1) {
 		/* wait for previous coredump complete */
 		if (aee_get_mode() == AEE_MODE_CUSTOMER_USER)
@@ -746,6 +749,7 @@ void scp_aed(enum SCP_RESET_TYPE type, enum scp_core_id id)
 			continue;
 		}
 	}
+#endif
 
 	if (atomic_read(&coredumping) == true)
 		pr_notice("[SCP] coredump overwrite happen\n");
