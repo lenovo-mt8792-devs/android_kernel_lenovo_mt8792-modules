@@ -85,7 +85,6 @@ mdp_drv_mt6878-objs := mdp_mt6878.o\
 	mdp_event_common.o \
 	cmdq_subsys_common.o \
 	cmdq_helper_ext.o \
-	cmdq_mmp.o \
 	mdp_fence.o \
 	mdp_dpc.o
 
@@ -99,7 +98,6 @@ mdp_drv_mt6886-objs := mdp_mt6886.o\
 	mdp_event_common.o \
 	cmdq_subsys_common.o \
 	cmdq_helper_ext.o \
-	cmdq_mmp.o \
 	mdp_fence.o \
 	mdp_dpc.o
 
@@ -113,7 +111,6 @@ mdp_drv_mt6897-objs := mdp_mt6897.o\
 	mdp_event_common.o \
 	cmdq_subsys_common.o \
 	cmdq_helper_ext.o \
-	cmdq_mmp.o \
 	mdp_fence.o \
 	mdp_dpc.o
 
@@ -127,7 +124,6 @@ mdp_drv_mt6983-objs := mdp_mt6983.o\
 	mdp_event_common.o \
 	cmdq_subsys_common.o \
 	cmdq_helper_ext.o \
-	cmdq_mmp.o \
 	mdp_fence.o \
 	mdp_dpc.o
 
@@ -141,7 +137,6 @@ mdp_drv_mt6985-objs := mdp_mt6985.o\
 	mdp_event_common.o \
 	cmdq_subsys_common.o \
 	cmdq_helper_ext.o \
-	cmdq_mmp.o \
 	mdp_fence.o \
 	mdp_dpc.o
 
@@ -155,14 +150,18 @@ mdp_drv_mt6989-objs := mdp_mt6989.o\
 	mdp_event_common.o \
 	cmdq_subsys_common.o \
 	cmdq_helper_ext.o \
-	cmdq_mmp.o \
 	mdp_fence.o \
 	mdp_dpc.o
 
 #obj-y += cmdq_prof.o
 #obj-y += cmdq_test.o
 
-#ifeq ($(strip $(CONFIG_MMPROFILE)),y)
-#obj-y += cmdq_mmp.o
-#endif
+ifeq ($(strip $(CONFIG_MMPROFILE)),y)
+mdp_drv_mt6878-objs += cmdq_mmp.o
+mdp_drv_mt6886-objs += cmdq_mmp.o
+mdp_drv_mt6897-objs += cmdq_mmp.o
+mdp_drv_mt6983-objs += cmdq_mmp.o
+mdp_drv_mt6985-objs += cmdq_mmp.o
+mdp_drv_mt6989-objs += cmdq_mmp.o
+endif
 
