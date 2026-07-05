@@ -25,9 +25,8 @@
 
 #include "mtk_battery.h"
 #include "mtk_gauge.h"
-#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
+
 #include <mt-plat/aee.h>
-#endif
 
 #define RG_TM_PASCODE1				0x107
 #define RG_ADC_CONFG1				0x1A4
