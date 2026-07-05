@@ -12,9 +12,7 @@
 #include <media/v4l2-device.h>
 #include <media/v4l2-subdev.h>
 
-#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 #include <aee.h>
-#endif
 
 /* OIS Workqueue */
 // #include <linux/hrtimer.h>
