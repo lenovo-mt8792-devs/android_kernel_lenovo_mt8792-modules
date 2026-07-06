@@ -1,0 +1,12 @@
+export MTK_PLATFORM_VERSION := mt6897
+export BUILD_RULE := OOT
+export CONFIG_DMA_SHARED_BUFFER_TEST_EXPORTER := y
+export CONFIG_MALI_MEMORY_GROUP_MANAGER := y
+export CONFIG_MALI_PROTECTED_MEMORY_ALLOCATOR := y
+
+subdir-ccflags-y += -D__ANDROID_COMMON_KERNEL__
+
+obj-m += mali_avalon/mali-r44p1/drivers/gpu/arm/midgard/
+obj-m += mali_avalon/mali-r44p1/drivers/base/arm/memory_group_manager/
+obj-m += mali_avalon/mali-r44p1/drivers/base/arm/protected_memory_allocator/
+obj-m += mali_avalon/mali-r44p1/drivers/base/arm/dma_buf_test_exporter/
