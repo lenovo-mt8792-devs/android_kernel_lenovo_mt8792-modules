@@ -336,5 +336,5 @@ AOV_SRC += aov/plat/v2/aov_mem_service_v2.o
 AOV_SRC += aov/plat/v2/aov_recovery_v2.o
 AOV_SRC += aov/plat/aov_plat.o
 
-obj-$(CONFIG_MTK_APUSYS_SUPPORT) += apu_aov.o
+#obj-$(CONFIG_MTK_APUSYS_SUPPORT) += apu_aov.o
 apu_aov-objs = $(AOV_SRC)

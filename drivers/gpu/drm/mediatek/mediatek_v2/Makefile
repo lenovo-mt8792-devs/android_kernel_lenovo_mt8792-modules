@@ -98,7 +98,7 @@ obj-$(CONFIG_DEVICE_MODULES_DRM_MEDIATEK) += mtk_sync.o
 
 obj-$(CONFIG_DEVICE_MODULES_DRM_MEDIATEK) += mtk_panel_ext.o
 obj-$(CONFIG_DEVICE_MODULES_DRM_MEDIATEK) += mtk_disp_notify.o
-obj-$(CONFIG_DEVICE_MODULES_DRM_MEDIATEK) += mtk_aod_scp.o
+#obj-$(CONFIG_DEVICE_MODULES_DRM_MEDIATEK) += mtk_aod_scp.o
 
 obj-$(CONFIG_DEVICE_MODULES_DRM_MEDIATEK) += mtk_disp_sec.o
 

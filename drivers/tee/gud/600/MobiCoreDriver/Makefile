@@ -17,7 +17,7 @@
 GUD_ROOT_FOLDER := $(DEVICE_MODULES_PATH)/drivers/tee/gud/$(CONFIG_TRUSTONIC_TEE_VERSION)
 
 # add our modules to kernel.
-obj-$(CONFIG_TRUSTONIC_TEE_SUPPORT) += mcDrvModule.o
+#obj-$(CONFIG_TRUSTONIC_TEE_SUPPORT) += mcDrvModule.o
 
 mcDrvModule-y := \
 	admin.o \

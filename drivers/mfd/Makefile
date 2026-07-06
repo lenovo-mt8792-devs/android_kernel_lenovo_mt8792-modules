@@ -10,7 +10,7 @@ obj-$(CONFIG_MFD_MT6681)	+= mt6681-core.o
 obj-$(CONFIG_MT6685_AUDCLK)	+= mt6685-audclk.o
 obj-$(CONFIG_MFD_MT6685)	+= mt6685-core.o
 obj-$(CONFIG_MFD_MTK_SPMI_PMIC)	+= mtk-spmi-pmic.o
-ifeq ($(CONFIG_DEBUG_FS), y)
-obj-$(CONFIG_MFD_MTK_SPMI_PMIC)	+= mtk-spmi-pmic-debug.o
-endif
+#ifeq ($(CONFIG_DEBUG_FS), y)
+#obj-$(CONFIG_MFD_MTK_SPMI_PMIC)	+= mtk-spmi-pmic-debug.o
+#endif
 obj-$(CONFIG_MFD_RT9490)	+= rt9490.o

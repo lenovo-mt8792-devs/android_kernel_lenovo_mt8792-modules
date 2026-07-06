@@ -12,8 +12,8 @@ obj-$(CONFIG_MTK_IPI) += mtk_tinysys_ipi.o
 obj-$(CONFIG_MTK_MBOX) += mtk-mbox.o
 obj-$(CONFIG_DEVICE_MODULES_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
 obj-$(CONFIG_DEVICE_MODULES_MTK_SCPSYS) += mtk-scpsys.o mtk-pm-domain-disable-unused.o
-obj-$(CONFIG_DEVICE_MODULES_MTK_SCPSYS) += scpsys-dummy.o
-scpsys-dummy-$(CONFIG_DEVICE_MODULES_MTK_SCPSYS) += mtk-scpsys-dummy.o
+#obj-$(CONFIG_DEVICE_MODULES_MTK_SCPSYS) += scpsys-dummy.o
+#scpsys-dummy-$(CONFIG_DEVICE_MODULES_MTK_SCPSYS) += mtk-scpsys-dummy.o
 ifneq ($(wildcard $(srctree)/$(src)/mtk-scpsys-mt6878.c),)
 obj-$(CONFIG_DEVICE_MODULES_MTK_SCPSYS) += mtk-scpsys-mt6878.o mtk-scpsys-bringup.o
 endif

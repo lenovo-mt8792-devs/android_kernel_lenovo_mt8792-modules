@@ -11,4 +11,4 @@ ccflags-y += -I$(DEVICE_MODULES_PATH)/drivers/misc/mediatek/vcp/include
 ccflags-y += -I$(DEVICE_MODULES_PATH)/drivers/clk/mediatek
 
 obj-$(CONFIG_MTK_MMINFRA) += mtk-mminfra-debug.o mtk-mminfra-imax.o
-obj-$(CONFIG_MTK_MMINFRA) += mm-fake-engine.o
+#obj-$(CONFIG_MTK_MMINFRA) += mm-fake-engine.o

@@ -70,7 +70,7 @@ subdir-ccflags-y  += -DTEEI_UNITTEST_SUPPORT
 endif
 
 #add teei kernel driver without ffa
-obj-m += isee.o
+#obj-m += isee.o
 isee-y :=              tee/tee_core.o \
                        tee/capi_proxy.o \
                        tee/tee_client_api.o \

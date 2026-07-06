@@ -92,6 +92,6 @@ mediatek-cust-panel-sample-y :=  \
 
 obj-$(CONFIG_DRM_MEDIATEK_PANEL) += mediatek-drm-gateic.o
 obj-$(CONFIG_DRM_MEDIATEK_PANEL) += mediatek-drm-panel-drv.o
-obj-$(CONFIG_DRM_MEDIATEK_PANEL) += mediatek-cust-panel-sample.o
+# obj-$(CONFIG_DRM_MEDIATEK_PANEL) += mediatek-cust-panel-sample.o
 
 ccflags-$(CONFIG_DRM_MEDIATEK_PANEL) += -I$(DEVICE_MODULES_PATH)/drivers/leds/

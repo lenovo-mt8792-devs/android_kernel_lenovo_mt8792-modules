@@ -24,7 +24,7 @@ ufs-mediatek-mod-$(CONFIG_UFSHID)               += ufshid.o
 ufs-mediatek-mod-$(CONFIG_UFSRINGBUF)           += ufsringbuf.o
 
 # UFS KO with iSE enabled
-obj-$(CONFIG_DEVICE_MODULES_SCSI_UFS_MEDIATEK)  += ufs-mediatek-mod-ise.o
+#obj-$(CONFIG_DEVICE_MODULES_SCSI_UFS_MEDIATEK)  += ufs-mediatek-mod-ise.o
 ufs-mediatek-mod-ise-y                              += ../ufs-mediatek.o ../ufs-mediatek-sysfs.o ../ufs-mediatek-mimic.o
 ufs-mediatek-mod-ise-$(CONFIG_MTK_BLOCK_IO_TRACER)  += ../ufs-mediatek-btag.o
 ufs-mediatek-mod-ise-$(CONFIG_RPMB)                 += ../ufs-mediatek-rpmb.o
