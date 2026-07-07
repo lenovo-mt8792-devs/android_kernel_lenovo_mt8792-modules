@@ -1642,13 +1642,48 @@ static int32_t nvt_ts_point_data_checksum(uint8_t *buf, uint8_t length)
 }
 #endif /* POINT_DATA_CHECKSUM */
 
-//+penlink,fangzhihua.wt ,20240426,add patch
-#if NVT_DPR_SWITCH
-#define KEY_SKIN_STYLUS       249   //144hz pen detected key 
 #define FUNCPAGE_STYLUS 5
 #define LEAVE_PEN_MODE 0
 #define DETECT_PEN 1
 #define ENTER_PEN_MODE 2
+
+#if NVT_REPORT_PEN_MAC_ADDR
+static uint8_t pen_mac_addr[6] = { 0 };
+static uint8_t g_pen_status = LEAVE_PEN_MODE;
+static bool g_uevent_mac_pending = false;
+static bool g_uevent_detect_sent = false;
+static DEFINE_MUTEX(pen_data_mutex);
+
+static void nvt_pen_report_mac(uint8_t *point_data)
+{
+	if (g_uevent_mac_pending) {
+		uint8_t *mac_source = &point_data[67];
+		if ((mac_source[0] | mac_source[1] | mac_source[2] | mac_source[3] |
+			mac_source[4] | mac_source[5]) == 0x00 ||
+			(mac_source[0] & mac_source[1] & mac_source[2] & mac_source[3] &
+			mac_source[4] & mac_source[5]) == 0xFF)
+		    return; /* ignore invalid address that fw sometimes reports */
+
+		pen_mac_addr[0] = mac_source[0];
+		pen_mac_addr[1] = mac_source[1];
+		pen_mac_addr[2] = mac_source[2];
+		pen_mac_addr[3] = mac_source[3];
+		pen_mac_addr[4] = mac_source[4];
+		pen_mac_addr[5] = mac_source[5];
+	#if 0
+		NVT_LOG("pen_mac_addr2=%02x:%02x:%02x:%02x:%02x:%02x",
+		pen_mac_addr[5],pen_mac_addr[4],
+		pen_mac_addr[3],pen_mac_addr[2],
+		pen_mac_addr[1],pen_mac_addr[0]);
+	#endif
+		kobject_uevent(&nvt_ts_pdev->dev.kobj,KOBJ_CHANGE);
+		g_uevent_mac_pending = false;
+	}
+}
+#endif
+
+//+penlink,fangzhihua.wt ,20240426,add patch
+#if NVT_DPR_SWITCH
 int32_t nvt_check_stylus_state(uint8_t input_id, uint8_t *data)
 {
 	int32_t ret = 0;
@@ -1657,20 +1692,28 @@ int32_t nvt_check_stylus_state(uint8_t input_id, uint8_t *data)
 
 	if ((input_id == DATA_PROTOCOL) && (func_type == FUNCPAGE_STYLUS)) {
 		ret = stylus_state;
+		g_pen_status = stylus_state;
 
 		if (stylus_state == DETECT_PEN) {
-			NVT_LOG("Enter stylus mode\n");
-			input_report_key(ts->input_dev, KEY_SKIN_STYLUS, 1);
-			input_sync(ts->input_dev);
-			input_report_key(ts->input_dev, KEY_SKIN_STYLUS, 0);
-			input_sync(ts->input_dev);
 			ret = 1;
+			g_uevent_mac_pending = false;
+			if (!g_uevent_detect_sent) {
+				NVT_LOG("Enter stylus mode\n");
+				kobject_uevent(&nvt_ts_pdev->dev.kobj,KOBJ_CHANGE);
+				g_uevent_detect_sent = true;
+			}
 		} else if(stylus_state == ENTER_PEN_MODE) {
 			ts->fw_pen_state = 1;
 			ret = 1;
+			/* defer uevent until fw reports a pen with a valid mac */
+			g_uevent_mac_pending = true;
+			g_uevent_detect_sent = false;
 		} else if(stylus_state == LEAVE_PEN_MODE) {
 			ts->fw_pen_state = 0;
 			ret = 1;
+			g_uevent_mac_pending = false;
+			g_uevent_detect_sent = false;
+			kobject_uevent(&nvt_ts_pdev->dev.kobj,KOBJ_CHANGE);
 		} else {
 			NVT_ERR("invalid state %d!\n", stylus_state);
 			ret = -1;
@@ -1681,10 +1724,6 @@ int32_t nvt_check_stylus_state(uint8_t input_id, uint8_t *data)
 }
 #endif
 
-#if NVT_REPORT_PEN_MAC_ADDR	
-uint8_t pen_mac_addr[6];
-static uint8_t pen_mac_addr_pre[6]={0};
-#endif
 //-penlink,fangzhihua.wt ,20240426,add patch
 /*******************************************************
 Description:
@@ -2015,21 +2054,8 @@ static irqreturn_t nvt_ts_work_func(int irq, void *data)
 			} else if (pen_format_id == 0xF0) {
 //+penlink,fangzhihua.wt ,20240426,add patch
 #if NVT_REPORT_PEN_MAC_ADDR
-				pen_mac_addr[0] = point_data[67];
-				pen_mac_addr[1] = point_data[68];
-				pen_mac_addr[2] = point_data[69];
-				pen_mac_addr[3] = point_data[70];
-				pen_mac_addr[4] = point_data[71];
-				pen_mac_addr[5] = point_data[72];
-				NVT_LOG("pen_mac_addr2=%02x:%02x:%02x:%02x:%02x:%02x",
-				pen_mac_addr[5],pen_mac_addr[4],
-				pen_mac_addr[3],pen_mac_addr[2],
-				pen_mac_addr[1],pen_mac_addr[0]);
 				//report MAC addr
-				if(memcmp(pen_mac_addr,pen_mac_addr_pre,sizeof(pen_mac_addr_pre))){
-					kobject_uevent(&nvt_ts_pdev->dev.kobj,KOBJ_CHANGE);
-					memcpy(pen_mac_addr_pre,pen_mac_addr,6);
-				}
+				nvt_pen_report_mac(point_data);
 #endif
 				goto XFER_ERROR;
 			}  else if (pen_format_id == 0xF1) {
@@ -2068,11 +2094,6 @@ static irqreturn_t nvt_ts_work_func(int irq, void *data)
 			input_report_key(ts->pen_input_dev, BTN_TOOL_PEN, 0);
 			input_report_key(ts->pen_input_dev, BTN_STYLUS, 0);
 			input_report_key(ts->pen_input_dev, BTN_STYLUS2, 0);
-//-penlink,fangzhihua.wt ,20240426,add patch
-#if NVT_REPORT_PEN_MAC_ADDR
-			memset(pen_mac_addr,0,sizeof(pen_mac_addr));
-#endif
-//-penlink,fangzhihua.wt ,20240426,add patch
 		}
 
 		input_sync(ts->pen_input_dev);
@@ -2305,46 +2326,28 @@ int ts_pen_mac_addr_uevent(struct device *dev, struct kobj_uevent_env *env)
 {
 	int ret = 0;
 
-	NVT_LOG("pen_mac_addr=%02x:%02x:%02x:%02x:%02x:%02x",
-		pen_mac_addr[5],pen_mac_addr[4],
-		pen_mac_addr[3],pen_mac_addr[2],
-		pen_mac_addr[1],pen_mac_addr[0]);
-	NVT_LOG("pen_mac_addr_pre=%02x:%02x:%02x:%02x:%02x:%02x",
-		pen_mac_addr_pre[5],pen_mac_addr_pre[4],
-		pen_mac_addr_pre[3],pen_mac_addr_pre[2],
-		pen_mac_addr_pre[1],pen_mac_addr_pre[0]);
-//+peridot-11323,fangzhihua.wt,20240614,penlink, add UEVENT
-	ret = add_uevent_var(env,"UEVENT_TO=PEN_FRAMEWORK");
-   	if(ret)
-		NVT_LOG("UEVENT_TO=PEN_FRAMEWORK error");
-//-peridot-11323,fangzhihua.wt,20240614,penlink, add get Pen_ID info
-	ret = add_uevent_var(env,"MAC=%02x:%02x:%02x:%02x:%02x:%02x",
-		pen_mac_addr[5],pen_mac_addr[4],
-		pen_mac_addr[3],pen_mac_addr[2],
-		pen_mac_addr[1],pen_mac_addr[0]);
+	NVT_LOG("g_pen_status=%d", g_pen_status);
 
-	if(ret)
-		return ret;
-	ret = add_uevent_var(env,"INFO=2;100;0xffff;0xffff;0x3fffff");
-	if(ret)
-	{
-		NVT_LOG("INFO=2;100;0xffff;0xffff;0x3fffff error");
-		return ret;
-	}
-	ret = add_uevent_var(env,"TYPE=TP");
-	if(ret)
-	{
-		NVT_LOG("TYPE=TP error");
-		return ret;
-	}
-	ret = add_uevent_var(env,"TOUCH_INFORMATION=08");
-	if(ret)
-	{
-		NVT_LOG("TOUCH_INFORMATION=08 error");
-		return ret;
+	ret = add_uevent_var(env,"pencil_status=%d", g_pen_status);
+	if (ret)
+		goto out;
+
+	/* report MAC if we are pending to give a valid one */
+	if (g_uevent_mac_pending) {
+		NVT_LOG("pen_mac_addr=%02x:%02x:%02x:%02x:%02x:%02x",
+			pen_mac_addr[5],pen_mac_addr[4],
+			pen_mac_addr[3],pen_mac_addr[2],
+			pen_mac_addr[1],pen_mac_addr[0]);
+		ret = add_uevent_var(env,"pencil_addr=%02x%02x%02x%02x%02x%02x",
+			pen_mac_addr[5],pen_mac_addr[4],
+			pen_mac_addr[3],pen_mac_addr[2],
+			pen_mac_addr[1],pen_mac_addr[0]);
+		if(ret)
+			goto out;
 	}
 
-	return 0;
+out:
+	return ret;
 }
 #endif
 
@@ -2954,11 +2957,6 @@ static int32_t nvt_ts_probe(struct spi_device *client)
 		input_set_capability(ts->input_dev, EV_KEY, touch_key_array[retry]);
 	}
 #endif
-//+penlink,fangzhihua.wt ,20240426,add patch
-#if NVT_DPR_SWITCH
-	input_set_capability(ts->input_dev, EV_KEY, KEY_SKIN_STYLUS);
-#endif
-//-penlink,fangzhihua.wt ,20240426,add patch
 #if WAKEUP_GESTURE
 	for (retry = 0; retry < (sizeof(gesture_key_array) / sizeof(gesture_key_array[0])); retry++) {
 		input_set_capability(ts->input_dev, EV_KEY, gesture_key_array[retry]);
