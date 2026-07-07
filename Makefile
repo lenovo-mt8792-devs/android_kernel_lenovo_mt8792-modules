@@ -5,6 +5,8 @@
 export DEVICE_MODULES_PATH := $(srctree)/$(src)
 DEVICE_MODULES_INCLUDE := -I$(DEVICE_MODULES_PATH)/include
 
+export TARGET_BUILD_VARIANT := user
+
 LINUXINCLUDE := $(DEVICE_MODULES_INCLUDE) $(LINUXINCLUDE)
 
 subdir-ccflags-y += -Werror \
