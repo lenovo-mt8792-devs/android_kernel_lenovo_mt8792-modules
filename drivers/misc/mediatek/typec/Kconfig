@@ -15,3 +15,4 @@ source "$(KCONFIG_EXT_PREFIX)drivers/misc/mediatek/typec/tcpc/Kconfig"
 
 source "$(KCONFIG_EXT_PREFIX)drivers/misc/mediatek/typec/mux/Kconfig"
 
+source "$(KCONFIG_EXT_PREFIX)drivers/misc/mediatek/typec/tn_keyboard/Kconfig"
