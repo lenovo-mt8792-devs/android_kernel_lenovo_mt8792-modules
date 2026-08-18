@@ -248,7 +248,7 @@ int pogo_tx_dma(struct uart_8250_port *p){
 	if(uart_dma_write_call_back != NULL){
 		uart_dma_write_call_back(1);              
 	}else{
-		pr_err("TN_KB:%s %d callback failed!\n",__func__,__LINE__);
+		//pr_err("TN_KB:%s %d callback failed!\n",__func__,__LINE__);
 	}
 
 	if (dma->tx_running) {
@@ -1586,9 +1586,9 @@ static void mtk8250_dma_rx_complete(void *param)
 	//#ifdef CONFIG_TN_KEYBOARD
 	if(uart_dma_call_back != NULL){
 		uart_dma_call_back(ptr, cnt);
-		pr_err("TN_KB:%s %d callback ok!total=%d copied=%d copied_sec=%d\n",__func__,__LINE__,total,copied,copied_sec);
+		//pr_err("TN_KB:%s %d callback ok!total=%d copied=%d copied_sec=%d\n",__func__,__LINE__,total,copied,copied_sec);
 	}else{
-		pr_err("TN_KB:%s %d callback failed!\n",__func__,__LINE__);
+		//pr_err("TN_KB:%s %d callback failed!\n",__func__,__LINE__);
 	}
 	//#endif
 	/*END TINNO, 20230215，guoxiong2, add for keyboard  feature*/

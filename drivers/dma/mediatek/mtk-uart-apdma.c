@@ -899,7 +899,7 @@ static irqreturn_t vchan_complete_thread_irq(int irq, void *dev_id)
 		start_ns = do_div(start_sec, 1000000000);
 		end_sec = c->rec_info[idx].complete_time;
 		end_ns = do_div(end_sec, 1000000000);
-		pr_info("rx h_t:[%5lu.%06llu], cb_s:[%5lu.%06llu], cb_e:[%5lu.%06llu], wpt:0x%x, rpt:0x%x, rpt_old:0x%x, wpt_old:none, irq_wg=0x%x, len:%d\n",
+		pr_debug("rx h_t:[%5lu.%06llu], cb_s:[%5lu.%06llu], cb_e:[%5lu.%06llu], wpt:0x%x, rpt:0x%x, rpt_old:0x%x, wpt_old:none, irq_wg=0x%x, len:%d\n",
 			(unsigned long)recv_sec, recv_ns / 1000, (unsigned long)start_sec, start_ns / 1000,
 			(unsigned long)end_sec, end_ns / 1000, wpt, mtk_uart_apdma_read(c,VFF_RPT), c->cur_rpt, c->irq_wg, c->rec_info[idx].trans_len);
 	} else if ((c->dir == DMA_MEM_TO_DEV)
@@ -913,7 +913,7 @@ static irqreturn_t vchan_complete_thread_irq(int irq, void *dev_id)
 		recv_ns = do_div(recv_sec, 1000000000);
 		end_ns = do_div(end_sec, 1000000000);
 		if (cost_time > 10000000)
-			pr_info("tx s_t:[%5lu.%06llu], h_t:[%5lu.%06llu], cb_e:[%5lu.%06llu],"
+			pr_debug("tx s_t:[%5lu.%06llu], h_t:[%5lu.%06llu], cb_e:[%5lu.%06llu],"
 				"rpt:0x%x, len:%d, cost_time: %llu\n",
 				(unsigned long)start_sec, start_ns / 1000,
 				(unsigned long)recv_sec, recv_ns / 1000,
