@@ -30,6 +30,7 @@ static DECLARE_WAIT_QUEUE_HEAD(read_waiter);
 //static BLOCKING_NOTIFIER_HEAD(tn_keyboard_notifier_list);
 
 static int tn_keyboard_event_process(unsigned char tn_keyboard_event);
+static void tn_keyboard_input_disconnect(void);
 #ifdef CONFIG_PLUG_SUPPORT
 static irqreturn_t keybaord_core_plug_irq_handler(int irq, void *data);
 #endif
@@ -285,6 +286,7 @@ static int tn_keyboard_mod_data_process(char *buf, int len)
 				input_sync(input_dev);
 				input_report_key(input_dev, KEY_KB_ENABLE, 0);
 				input_sync(input_dev);
+				tn_keyboard_input_connect();
 				kb_debug("%s %d	report KEY_KB_ENABLE \n",
 					 __func__, __LINE__);
 			} else if (buf[4] == 0x00) {
@@ -292,6 +294,7 @@ static int tn_keyboard_mod_data_process(char *buf, int len)
 				input_sync(input_dev);
 				input_report_key(input_dev, KEY_KB_DISABLE, 0);
 				input_sync(input_dev);
+				tn_keyboard_input_disconnect();
 				kb_debug("%s %d	report KEY_KB_DISABLE \n",
 					 __func__, __LINE__);
 			}
