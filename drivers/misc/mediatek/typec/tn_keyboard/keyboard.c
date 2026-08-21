@@ -319,6 +319,17 @@ int tn_keyboard_mm_input_report(char *buf)
 					input_report_key(input_dev,
 							 mm_tn_keyboard[j][1],
 							 1);
+					if (mm_tn_keyboard[j][1] ==
+					    KEY_TOUCHPANELMUTE) {
+						if (kbd->input_touchpad) {
+							input_unregister_device(
+								kbd->input_touchpad);
+							kbd->input_touchpad =
+								NULL;
+						} else {
+							touchpad_input_init();
+						}
+					}
 					if (keywords != 0x38e) { //lock key
 						tn_keyboard_input_power_key_report();
 					}
