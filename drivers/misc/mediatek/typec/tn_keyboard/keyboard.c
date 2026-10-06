@@ -241,6 +241,45 @@ void *memscan_ex(void *addr, int c, size_t size)
 	}
 	return (void *)p;
 }
+
+static void tn_keyboard_input_report_combo(struct input_dev *input_dev,
+					   int code)
+{
+	static const int combo_app1[] = { KEY_LEFTMETA, KEY_1 };
+	static const int combo_app2[] = { KEY_LEFTMETA, KEY_2 };
+	static const int combo_split[] = { KEY_LEFTCTRL, KEY_LEFTMETA,
+					   KEY_RIGHT };
+	const int *keys;
+	int num;
+
+	switch (code) {
+	case KEY_CUSTOMERAPP1:
+		keys = combo_app1;
+		num = ARRAY_SIZE(combo_app1);
+		break;
+	case KEY_CUSTOMERAPP2:
+		keys = combo_app2;
+		num = ARRAY_SIZE(combo_app2);
+		break;
+	case KEY_SPLITSCREEN:
+		keys = combo_split;
+		num = ARRAY_SIZE(combo_split);
+		break;
+	default:
+		return;
+	}
+
+	/* Report key down */
+	for (int i = 0; i < num; i++)
+		input_report_key(input_dev, keys[i], 1);
+	input_sync(input_dev);
+
+	/* Report key up */
+	for (int i = 0; i < num; i++)
+		input_report_key(input_dev, keys[i], 0);
+	input_sync(input_dev);
+}
+
 int tn_keyboard_mm_input_report(char *buf)
 {
 	int i = 0, j = 0;
@@ -330,6 +369,9 @@ int tn_keyboard_mm_input_report(char *buf)
 							touchpad_input_init();
 						}
 					}
+					tn_keyboard_input_report_combo(
+						input_dev,
+						mm_tn_keyboard[j][1]);
 					if (keywords != 0x38e) { //lock key
 						tn_keyboard_input_power_key_report();
 					}
